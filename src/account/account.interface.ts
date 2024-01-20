@@ -1,1 +1,5 @@
-export interface Account {}
+export interface Account {
+  iban: string;
+  balance: number;
+  currency: string;
+}

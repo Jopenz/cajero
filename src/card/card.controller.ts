@@ -6,8 +6,12 @@ import { Card } from './card.interface';
 @ApiTags('card')
 @Controller('card')
 export class CardController {
+  constructor(private cardService: CardService) {}
+
   @Post(':cardNumber')
-  findCard(@Param('cardNumber') cardNumber: number) {}
+  async findCard(@Param('cardNumber') cardNumber: number) {
+    return await this.cardService.findCard(cardNumber);
+  }
 
   @Post('block')
   block(): string {

@@ -4,14 +4,12 @@ import { AppService } from './app.service';
 import { AccountController } from './account/account.controller';
 import { CardController } from './card/card.controller';
 import { AuthModule } from './auth/auth.module';
-import { CardService, Database } from './card/card.service';
-import { AccountService } from './account/account.service';
-import { ClientService } from './client/client.service';
-import { ClientController } from './client/client.controller';
+import { CardService } from './card/card.service';
+import { DatabaseService } from './database/database.service';
 
 @Module({
-  imports: [AuthModule, Database],
-  controllers: [AppController, AccountController, CardController, ClientController],
-  providers: [AppService, Database, CardService, AccountService, ClientService],
+  imports: [AuthModule],
+  controllers: [AppController, AccountController, CardController],
+  providers: [AppService, CardService, DatabaseService],
 })
 export class AppModule {}

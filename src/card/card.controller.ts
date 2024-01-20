@@ -9,8 +9,8 @@ export class CardController {
   constructor(private cardService: CardService) {}
 
   @Post(':cardNumber')
-  findCard(@Param('cardNumber') cardNumber: number): Promise<Card> {
-    return this.cardService.findCard(cardNumber);
+  async findCard(@Param('cardNumber') cardNumber: number) {
+    return await this.cardService.findCard(cardNumber);
   }
 
   @Post('block')

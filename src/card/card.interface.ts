@@ -1,3 +1,5 @@
+import { Account } from 'src/account/account.interface';
+
 export interface Configurations {
   language: string;
   currency: string;

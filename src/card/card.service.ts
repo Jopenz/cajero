@@ -1,35 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { Card } from './card.interface';
-
-@Injectable()
-export class Database {
-  getCards(): Promise<Card[]> {
-    return Promise.resolve([]);
-  }
-  findCard(cardNumber: number): Promise<Card> {
-    return Promise.resolve({
-      number: 123456789,
-      type: 'debit',
-      pin: 1234,
-      blocked: false,
-      configuration: {
-        language: 'en',
-        currency: 'USD',
-        dailyLimit: 500,
-      },
-    });
-  }
-}
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class CardService {
-  constructor(private database: Database) {}
+  constructor(private database: DatabaseService) {}
 
   getCards(): Promise<Card[]> {
-    return this.database.getCards();
+    return Promise.resolve(this.database.getCards());
   }
 
   findCard(cardNumber: number): Promise<Card> {
-    return this.database.findCard(cardNumber);
+    const cards = this.database.getCards();
+    const card = cards.find((card) => card.number == cardNumber);
+    return Promise.resolve(card);
   }
 }

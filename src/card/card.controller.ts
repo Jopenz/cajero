@@ -1,9 +1,18 @@
-import { Controller, Post, Put, Get } from '@nestjs/common';
+import { Controller, Post, Put, Get, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { CardService } from './card.service';
+import { Card } from './card.interface';
 
 @ApiTags('card')
 @Controller('card')
 export class CardController {
+  constructor(private cardService: CardService) {}
+
+  @Post(':cardNumber')
+  findCard(@Param('cardNumber') cardNumber: number): Promise<Card> {
+    return this.cardService.findCard(cardNumber);
+  }
+
   @Post('block')
   block(): string {
     return 'block';

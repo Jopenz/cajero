@@ -37,8 +37,9 @@ export class CardController {
   @Post('configuration/:cardNumber')
   configuration(
     @Param('cardNumber') cardNumber: number,
+    @Param('pin') pin: number,
     @Body() config: ConfigurationsDTO,
   ): Promise<Card> {
-    return this.cardService.configuration(cardNumber, config);
+    return this.cardService.configuration(cardNumber, pin, config);
   }
 }

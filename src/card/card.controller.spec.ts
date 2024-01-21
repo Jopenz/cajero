@@ -16,15 +16,16 @@ describe('CardController', () => {
     const mockClients: Client[] = data.clients;
 
     const clientService = TestBed.create(ClientService).compile();
-    const cardService = TestBed.create(CardService).compile();
+
     databaseClient = clientService.unitRef.get(Database);
+
     databaseClient.getClients.mockResolvedValue(mockClients);
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CardController],
       providers: [
         { provide: ClientService, useValue: clientService.unit },
-        { provide: CardService, useValue: cardService.unitRef },
+        CardService,
       ],
     }).compile();
 
@@ -36,27 +37,27 @@ describe('CardController', () => {
   });
 
   it('Card - Change Pin card not active (error)', async () => {
-    const card: Card = await controller.changePin(4806239417031921, 1111, 4321);
-    expect(databaseClient.getClients).toHaveBeenCalled();
-    expect(card.pin).toEqual(1111);
+    expect(controller.changePin(4806239417031921, 1111, 4321)).rejects.toThrow(
+      'Card blocked.',
+    );
   });
 
   it('Card - Active', async () => {
-    const card: Card = await controller.block(4806239417031921, 4321);
-    expect(databaseClient.getClients).toHaveBeenCalled();
-    expect(card.blocked).toEqual(true);
-  });
-
-  it('Card - Inactive', async () => {
     const card: Card = await controller.unblock(4806239417031921, 4321);
     expect(databaseClient.getClients).toHaveBeenCalled();
     expect(card.blocked).toEqual(false);
   });
 
-  it('Card - Active', async () => {
+  it('Card - Block', async () => {
     const card: Card = await controller.block(4806239417031921, 4321);
     expect(databaseClient.getClients).toHaveBeenCalled();
     expect(card.blocked).toEqual(true);
+  });
+
+  it('Card - Active', async () => {
+    const card: Card = await controller.unblock(4806239417031921, 4321);
+    expect(databaseClient.getClients).toHaveBeenCalled();
+    expect(card.blocked).toEqual(false);
   });
 
   it('Card - Change Pin', async () => {
@@ -66,18 +67,18 @@ describe('CardController', () => {
   });
 
   it('Card - Configuration', async () => {
-    const card: Card = await controller.configuration(4806239417031921, {
+    const card: Card = await controller.configuration(4806239417031921, 1111, {
       dailyLimit: 1000,
     });
     expect(databaseClient.getClients).toHaveBeenCalled();
     expect(card.configuration.dailyLimit).toEqual(1000);
   });
 
-  it('Card - Configuration', async () => {
+  it('Card - Configuration (error)', async () => {
     expect(
-      controller.configuration(4806239417031921, {
+      controller.configuration(4806239417031921, 1111, {
         dailyLimit: 7000,
       }),
-    ).rejects.toThrow('Daily limit exceeded.');
+    ).rejects.toThrow('Daily limit not allowed.');
   });
 });

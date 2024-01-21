@@ -7,7 +7,7 @@ export interface Configurations {
 export interface Card {
   number: number;
   type: string;
-  pin: number;
+  pin: number | string;
   blocked: boolean;
   account: string;
   limit?: number;

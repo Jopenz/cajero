@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Database } from '../database/database.service';
 import { Client } from './client.interface';
 import { get, find, some } from 'lodash';
+import { compare } from '../commons';
 
 @Injectable()
 export class ClientService {
@@ -15,7 +16,7 @@ export class ClientService {
     const clients = await this.database.getClients();
     const client = find(clients, (client) => {
       return some(client.cards, (card) => {
-        return card.number === cardNumber && card.pin === pin;
+        return card.number === cardNumber && compare(pin, card.pin);
       });
     });
     if (!client) {

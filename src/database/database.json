@@ -56,7 +56,7 @@
                     "number": 123456789,
                     "type": "debit",
                     "account": "DE89370400440532013001",
-                    "pin": 1234,
+                    "pin": "$2b$10$ydWw5qBds0ao/SZbPiFrCOWrBgfhYmRj7fbNUEEnGMkeCG8gejWLW",
                     "blocked": false,
                     "configuration": {
                         "language": "en",
@@ -68,7 +68,7 @@
                     "number": 123456788,
                     "type": "credit",
                     "account": "DE89370400440532013000",
-                    "pin": 4567,
+                    "pin": "$2b$10$TK7y1xPJ/bIVeSsnqTmoceEnh.DKqul8dUL4VvlZfQwOpk/E12ZpO",
                     "blocked": false,
                     "limit": 1000,
                     "configuration": {
@@ -119,7 +119,7 @@
                 {
                     "number": 123456787,
                     "type": "credit",
-                    "pin": 1234,
+                    "pin": "$2b$10$8Bew1q747GSkTcgCSSWoDerMkkeC.HEnxU0nP/ZpfnQL3wkwHv3Y.",
                     "blocked": false,
                     "account": "DE89370400440532013002",
                     "configuration": {
@@ -157,7 +157,7 @@
                 {
                     "number": 4806239417031921,
                     "type": "debit",
-                    "pin": 4321,
+                    "pin": "$2b$10$XIOzqVXcNHerV.NM1I5Kje.wca3uAoYQPY.K9.cOFtTBAD..zUksi",
                     "blocked": true,
                     "account": "ES2820809812937198675436",
                     "configuration": {

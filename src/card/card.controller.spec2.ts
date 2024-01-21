@@ -12,6 +12,7 @@ describe('CardController', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CardController],
+      providers: [{ provide: CardService, useValue: unitRef }],
     }).compile();
 
     controller = module.get<CardController>(CardController);
@@ -21,19 +22,5 @@ describe('CardController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should retrieve cats from the database', async () => {
-    const mockCats: Card[] = [
-      {
-        number: 123456789,
-        type: 'debit',
-        pin: 1234,
-        blocked: false,
-        configuration: {
-          language: 'en',
-          currency: 'USD',
-          dailyLimit: 500,
-        },
-      },
-    ];
-  });
+  it('should retrieve cats from the database', async () => {});
 });

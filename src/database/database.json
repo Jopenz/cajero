@@ -1,0 +1,137 @@
+{
+    "clients": [
+        {
+            "id": 1,
+            "name": "John Doe",
+            "accounts": [
+                {
+                    "iban": "DE89370400440532013000",
+                    "balance": 100,
+                    "currency": "EUR",
+                    "bank": "DEUTDEDB",
+                    "movements": [
+                        {
+                            "date": "2020-01-01",
+                            "description": "Salary",
+                            "amount": 1000
+                        },
+                        {
+                            "date": "2020-01-02",
+                            "description": "Rent",
+                            "amount": -500
+                        },
+                        {
+                            "date": "2020-01-03",
+                            "description": "Transfer",
+                            "amount": -100
+                        }
+                    ],
+                    "dayLimit": 500
+                },
+                {
+                    "iban": "DE89370400440532013001",
+                    "balance": 2000,
+                    "currency": "EUR",
+                    "bank": "DEUTDEDB",
+                    "movements": [
+                        {
+                            "date": "2020-01-01",
+                            "description": "Salary",
+                            "amount": 1000
+                        },
+                        {
+                            "date": "2020-01-02",
+                            "description": "Rent",
+                            "amount": -500
+                        }
+                    ],
+                    "dayLimit": 100
+                }
+            ],
+            "cards": [
+                {
+                    "number": 123456789,
+                    "type": "debit",
+                    "account": "DE89370400440532013001",
+                    "pin": 1234,
+                    "blocked": false,
+                    "configuration": {
+                        "language": "en",
+                        "currency": "USD",
+                        "dailyLimit": 500
+                    }
+                },
+                {
+                    "number": 123456788,
+                    "type": "credit",
+                    "account": "DE89370400440532013000",
+                    "pin": 4567,
+                    "blocked": false,
+                    "limit": 1000,
+                    "configuration": {
+                        "language": "en",
+                        "currency": "USD",
+                        "dailyLimit": 500
+                    }
+                }
+            ],
+            "bank": {
+                "name": "Deutsche Bank",
+                "bic": "DEUTDEDB",
+                "country": "Germany",
+                "commissions": {
+                    "transfer": 3,
+                    "transferSameBank": 1
+                }
+            }
+        },
+        {
+            "id": 2,
+            "name": "Juan Perez",
+            "accounts": [
+                {
+                    "iban": "DE89370400440532013002",
+                    "balance": 300,
+                    "currency": "EUR",
+                    "bank": "HYVEDEMM",
+                    "movements": [
+                        {
+                            "date": "2020-01-01",
+                            "description": "Transfer",
+                            "amount": 200
+                        },
+                        {
+                            "date": "2020-01-02",
+                            "description": "Rent",
+                            "amount": -500
+                        }
+                    ],
+                    "dayLimit": 300
+                }
+            ],
+            "cards": [
+                {
+                    "number": 123456787,
+                    "type": "credit",
+                    "pin": 1234,
+                    "blocked": false,
+                    "account": "DE89370400440532013002",
+                    "configuration": {
+                        "language": "en",
+                        "currency": "USD",
+                        "dailyLimit": 500
+                    }
+                }
+            ],
+            "bank": {
+                "name": "Commerzbank",
+                "bic": "COBADEFF",
+                "country": "Germany",
+                "commissions": {
+                    "transfer": 3,
+                    "transferSameBank": 0.05
+                }
+            }
+        }
+    ]
+}

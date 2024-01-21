@@ -11,5 +11,7 @@ export interface Card {
   type: string;
   pin: number;
   blocked: boolean;
+  account: string;
+  limit?: number;
   configuration?: Configurations;
 }

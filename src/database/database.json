@@ -204,6 +204,17 @@
             }
         },
         {
+            "name": "Commerzbank",
+            "bic": "COBADEFF",
+            "country": "Germany",
+            "commissions": {
+                "withdrawal": 0,
+                "transfer": 0.5,
+                "transferForeign": 4,
+                "withdrawalForeign": 0.50
+            }
+        },
+        {
             "name": "Caixabank",
             "bic": "CAIXESBB",
             "country": "Spain",

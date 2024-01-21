@@ -124,5 +124,16 @@ describe('AccountController', () => {
     ).rejects.toThrow('The deposit is not available for this bank.');
   });
 
-  it('Tranfer - ', async () => {});
+  it('Tranfer John Doe => Juan Perez 300€', async () => {
+    const result = await controller.transfer(
+      123456789,
+      1234,
+      300,
+      'DE89370400440532013002',
+    );
+    expect(result.balance).toEqual(1583.6);
+    expect(result.movements.length).toEqual(7);
+    expect(result.movements[result.movements.length - 1].amount).toEqual(-300);
+    expect(result.movements[result.movements.length - 1].commission).toEqual(9);
+  });
 });

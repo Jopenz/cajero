@@ -3,6 +3,7 @@ import { GetMoney, Movements, Transfer } from './account.interface';
 import { ClientService } from '../client/client.service';
 import { BankService } from '../bank/bank.service';
 import dayjs from 'dayjs';
+import { Client } from 'src/client/client.interface';
 
 @Injectable()
 export class AccountService {
@@ -178,7 +179,74 @@ export class AccountService {
     return Promise.resolve(result);
   }
 
-  async transfer(): Promise<Transfer> {
-    return Promise.reject();
+  async transfer(
+    cardNumber: number,
+    pin: number,
+    amount: number,
+    iban: string,
+  ): Promise<Transfer> {
+    const client = await this.clientService.getClient(cardNumber, pin);
+    const receptor = await this.clientService.getClientByIban(iban);
+
+    if (!client) {
+      throw new Error('Client not found');
+    }
+
+    const card = client.cards.find((card) => card.number == cardNumber);
+
+    if (card.blocked) {
+      throw new Error('Card blocked.');
+    }
+
+    const account = client.accounts.find(
+      (account) => account.iban == card.account,
+    );
+
+    let commissions = (amount * client.bank.commissions.transfer) / 100;
+    let amountWithCommission = amount + commissions;
+
+    if (client.bank.bic !== receptor.bank.bic) {
+      //Is not the same bank - apply other commissions
+      commissions = (amount * client.bank.commissions.transferForeign) / 100;
+      amountWithCommission = amount + commissions;
+    }
+
+    if (account.balance < amountWithCommission) {
+      throw new Error('Not enough money');
+    } else {
+      account.balance -= amountWithCommission;
+    }
+
+    account.movements.push({
+      date: dayjs().format('YYYY-MM-DD').toString(),
+      amount: -amount,
+      commission: commissions,
+      description: 'Transfer',
+    });
+
+    const receptorAccount = receptor.accounts.find(
+      (account) => account.iban == iban,
+    );
+
+    receptorAccount.balance += amount;
+
+    receptorAccount.movements.push({
+      date: dayjs().format('YYYY-MM-DD').toString(),
+      amount: amount,
+      commission: 0,
+      description: 'Transfer',
+    });
+
+    const result: Transfer = {
+      from: account.iban,
+      to: receptorAccount.iban,
+      amount: amount,
+      description: 'Transfer',
+      date: dayjs().format('YYYY-MM-DD').toString(),
+      balance: account.balance,
+      movements: account.movements,
+    };
+
+    return Promise.resolve(result);
   }
 }

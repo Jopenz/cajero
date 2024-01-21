@@ -30,4 +30,5 @@ export interface Transfer {
   description: string;
   date: string;
   balance: number;
+  movements: Movements[];
 }

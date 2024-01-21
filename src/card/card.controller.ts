@@ -1,45 +1,44 @@
-import { Controller, Post, Put, Get, Param } from '@nestjs/common';
+import { Controller, Post, Put, Get, Param, Body } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CardService } from './card.service';
 import { Card } from './card.interface';
+import { ConfigurationsDTO } from './card.DTO';
 
 @ApiTags('card')
 @Controller('card')
 export class CardController {
   constructor(private cardService: CardService) {}
 
-  @Post('block')
-  block(): string {
-    return 'block';
+  @Post('block/:cardNumber')
+  block(
+    @Param('cardNumber') cardNumber: number,
+    @Param('pin') pin: number,
+  ): Promise<Card> {
+    return this.cardService.blockCard(cardNumber, pin);
   }
 
-  @Post('unblock')
-  unblock(): string {
-    return 'unblock';
+  @Post('unblock/:cardNumber')
+  unblock(
+    @Param('cardNumber') cardNumber: number,
+    @Param('pin') pin: number,
+  ): Promise<Card> {
+    return this.cardService.unblockCard(cardNumber, pin);
   }
 
-  @Post('change_pin')
-  changePin(): string {
-    return 'change_pin';
+  @Post('change_pin/:cardNumber')
+  changePin(
+    @Param('cardNumber') cardNumber: number,
+    @Param('newPin') newPin: number,
+    @Param('oldPin') oldPin: number,
+  ): Promise<Card> {
+    return this.cardService.changePin(cardNumber, newPin, oldPin);
   }
 
-  @Post(':cardNumber')
-  async findCard(@Param('cardNumber') cardNumber: number) {
-    return await this.cardService.findCard(cardNumber);
-  }
-
-  @Post('remove')
-  remove(): string {
-    return 'remove';
-  }
-
-  @Post('configuration')
-  configuration(): string {
-    return 'configuration';
-  }
-
-  @Get('configuration')
-  getConfiguration(): string {
-    return 'get_configuration';
+  @Post('configuration/:cardNumber')
+  configuration(
+    @Param('cardNumber') cardNumber: number,
+    @Body() config: ConfigurationsDTO,
+  ): Promise<Card> {
+    return this.cardService.configuration(cardNumber, config);
   }
 }

@@ -1,7 +1,7 @@
 export interface Configurations {
-  language: string;
-  currency: string;
-  dailyLimit: number;
+  language?: string;
+  currency?: string;
+  dailyLimit?: number;
 }
 
 export interface Card {

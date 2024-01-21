@@ -9,6 +9,7 @@ import { Database } from './database/database.service';
 import { AccountService } from './account/account.service';
 import { ClientController } from './client/client.controller';
 import { ClientService } from './client/client.service';
+import { BankService } from './bank/bank.service';
 
 @Module({
   imports: [AuthModule],
@@ -18,6 +19,6 @@ import { ClientService } from './client/client.service';
     CardController,
     ClientController,
   ],
-  providers: [AppService, CardService, Database, AccountService, ClientService],
+  providers: [AppService, CardService, Database, AccountService, ClientService, BankService],
 })
 export class AppModule {}

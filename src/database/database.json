@@ -13,16 +13,19 @@
                         {
                             "date": "2020-01-01",
                             "description": "Salary",
+                            "commission": 0,
                             "amount": 1000
                         },
                         {
                             "date": "2020-01-02",
                             "description": "Rent",
+                            "commission": 0,
                             "amount": -500
                         },
                         {
                             "date": "2020-01-03",
                             "description": "Transfer",
+                            "commission": 1,
                             "amount": -100
                         }
                     ]
@@ -36,11 +39,13 @@
                         {
                             "date": "2020-01-01",
                             "description": "Salary",
+                            "commission": 0,
                             "amount": 1000
                         },
                         {
                             "date": "2020-01-02",
                             "description": "Rent",
+                            "commission": 0,
                             "amount": -500
                         }
                     ]
@@ -78,8 +83,10 @@
                 "bic": "DEUTDEDB",
                 "country": "Germany",
                 "commissions": {
-                    "transfer": 3,
-                    "transferSameBank": 1
+                    "withdrawal": 0,
+                    "transfer": 1,
+                    "transferForeign": 3,
+                    "withdrawalForeign": 0.10
                 }
             }
         },
@@ -96,11 +103,13 @@
                         {
                             "date": "2020-01-01",
                             "description": "Transfer",
+                            "commission": 0,
                             "amount": 200
                         },
                         {
                             "date": "2020-01-02",
                             "description": "Rent",
+                            "commission": 0,
                             "amount": -500
                         }
                     ]
@@ -125,9 +134,84 @@
                 "bic": "COBADEFF",
                 "country": "Germany",
                 "commissions": {
-                    "transfer": 3,
-                    "transferSameBank": 0.05
+                    "withdrawal": 0,
+                    "transfer": 0.5,
+                    "transferForeign": 4,
+                    "withdrawalForeign": 0.50
                 }
+            }
+        },
+        {
+            "id": 2,
+            "name": "Adrian Martinez",
+            "accounts": [
+                {
+                    "iban": "ES2820809812937198675436",
+                    "balance": 10000,
+                    "currency": "€",
+                    "bank": "CAIXESBB",
+                    "movements": []
+                }
+            ],
+            "cards": [
+                {
+                    "number": 4806239417031921,
+                    "type": "debit",
+                    "pin": 4321,
+                    "blocked": true,
+                    "account": "ES2820809812937198675436",
+                    "configuration": {
+                        "language": "es",
+                        "currency": "€",
+                        "dailyLimit": 3000
+                    }
+                }
+            ],
+            "bank": {
+                "name": "Caixabank",
+                "bic": "CAIXESBB",
+                "country": "Spain",
+                "commissions": {
+                    "withdrawal": 0,
+                    "transfer": 0.5,
+                    "transferForeign": 4,
+                    "withdrawalForeign": 0.50
+                }
+            }
+        }
+    ],
+    "banks": [
+        {
+            "name": "Deutsche Bank",
+            "bic": "DEUTDEDB",
+            "country": "Germany",
+            "commissions": {
+                "withdrawal": 0,
+                "transfer": 1,
+                "transferForeign": 3,
+                "withdrawalForeign": 0.10
+            }
+        },
+        {
+            "name": "UniCredit Bank",
+            "bic": "HYVEDEMM",
+            "country": "Germany",
+            "commissions": {
+                "withdrawal": 0,
+                "transfer": 0.5,
+                "transferForeign": 4,
+                "withdrawalForeign": 2
+            }
+        },
+        {
+            "name": "Caixabank",
+            "bic": "CAIXESBB",
+            "country": "Spain",
+            "commissions": {
+                "withdrawal": 0,
+                "transfer": 0.5,
+                "transferForeign": 4,
+                "withdrawalForeign": 0.50
             }
         }
     ]

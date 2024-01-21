@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Account } from 'src/account/account.interface';
-import { Client } from 'src/client/client.interface';
+import { Bank, Client } from 'src/client/client.interface';
 
 @Injectable()
 export class Database {
@@ -9,6 +9,10 @@ export class Database {
   }
 
   getClients(): Promise<Client[]> {
+    return Promise.resolve([]);
+  }
+
+  getBanks(): Promise<Bank[]> {
     return Promise.resolve([]);
   }
 }

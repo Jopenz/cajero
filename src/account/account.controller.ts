@@ -8,9 +8,12 @@ import { AccountService } from './account.service';
 export class AccountController {
   constructor(private accountService: AccountService) {}
 
-  @Get('movements/:iban')
-  getMovements(iban: string): Promise<Movements[]> {
-    return this.accountService.getMovements(iban);
+  @Get('movements/:cardNumber')
+  getMovements(
+    @Param('cardNumber') cardNumber: number,
+    @Param('pin') pin: number,
+  ): Promise<Movements[]> {
+    return this.accountService.getMovements(cardNumber, pin);
   }
 
   @Post('money/:cardNumber')
@@ -18,8 +21,9 @@ export class AccountController {
     @Param('cardNumber') cardNumber: number,
     @Param('pin') pin: number,
     @Param('amount') amount: number,
+    @Param('bank') bank: string,
   ): Promise<GetMoney> {
-    return this.accountService.getMoney(cardNumber, pin, amount);
+    return this.accountService.getMoney(cardNumber, pin, amount, bank);
   }
 
   @Put('deposit/:cardNumber')
@@ -27,13 +31,9 @@ export class AccountController {
     @Param('cardNumber') cardNumber: number,
     @Param('pin') pin: number,
     @Param('amount') amount: number,
+    @Param('bank') bank: string,
   ): Promise<GetMoney> {
-    return this.accountService.deposit(cardNumber, pin, amount);
-  }
-
-  @Post('iban')
-  getIBAN(): string {
-    return 'IBAN';
+    return this.accountService.deposit(cardNumber, pin, amount, bank);
   }
 
   @Post('transfer')

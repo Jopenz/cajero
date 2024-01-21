@@ -8,11 +8,6 @@ import { Card } from './card.interface';
 export class CardController {
   constructor(private cardService: CardService) {}
 
-  @Post(':cardNumber')
-  async findCard(@Param('cardNumber') cardNumber: number) {
-    return await this.cardService.findCard(cardNumber);
-  }
-
   @Post('block')
   block(): string {
     return 'block';
@@ -23,14 +18,19 @@ export class CardController {
     return 'unblock';
   }
 
-  @Post('remove')
-  remove(): string {
-    return 'remove';
-  }
-
   @Post('change_pin')
   changePin(): string {
     return 'change_pin';
+  }
+
+  @Post(':cardNumber')
+  async findCard(@Param('cardNumber') cardNumber: number) {
+    return await this.cardService.findCard(cardNumber);
+  }
+
+  @Post('remove')
+  remove(): string {
+    return 'remove';
   }
 
   @Post('configuration')

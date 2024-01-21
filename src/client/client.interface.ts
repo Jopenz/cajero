@@ -2,8 +2,10 @@ import { Account } from 'src/account/account.interface';
 import { Card } from 'src/card/card.interface';
 
 export interface Commission {
+  withdrawal: number;
   transfer: number;
-  transferSameBank: number;
+  transferForeign: number;
+  withdrawalForeign: number;
 }
 export interface Bank {
   name: string;

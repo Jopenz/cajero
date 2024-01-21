@@ -1,20 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { Account, GetMoney, Movements } from './account.interface';
+import { GetMoney, Movements, Transfer } from './account.interface';
 import { ClientService } from '../client/client.service';
+import { BankService } from '../bank/bank.service';
 import dayjs from 'dayjs';
 
 @Injectable()
 export class AccountService {
-  constructor(private clientService: ClientService) {}
+  constructor(
+    private clientService: ClientService,
+    private bankService: BankService,
+  ) {}
 
-  async getMovements(iban: string): Promise<Movements[]> {
-    const client = await this.clientService.getClientByIban(iban);
+  async getMovements(cardNumber: number, pin: number): Promise<Movements[]> {
+    const client = await this.clientService.getClient(cardNumber, pin);
 
-    const account = client.accounts.find((account) => account.iban == iban);
-
-    if (!account) {
-      throw new Error('Account not found');
+    if (!client) {
+      throw new Error('Client not found');
     }
+
+    const card = client.cards.find((card) => card.number == cardNumber);
+
+    if (card.blocked) {
+      throw new Error('Card blocked.');
+    }
+
+    const account = client.accounts.find(
+      (account) => account.iban == card.account,
+    );
 
     return Promise.resolve(account.movements);
   }
@@ -23,14 +35,33 @@ export class AccountService {
     cardNumber: number,
     pin: number,
     amount: number,
+    bank: string,
   ): Promise<GetMoney> {
     const client = await this.clientService.getClient(cardNumber, pin);
+    let commissions = (amount * client.bank.commissions.withdrawal) / 100;
+    let amountWithCommission = amount + commissions;
+
+    if (bank !== client.bank.bic) {
+      //Is not the same bank - apply other commissions
+      const otherBank = await this.bankService.getBank(bank);
+
+      if (!otherBank) {
+        throw new Error('Bank not found');
+      }
+
+      commissions = (amount * otherBank.commissions.withdrawalForeign) / 100;
+      amountWithCommission = amount + commissions;
+    }
 
     if (!client) {
       throw new Error('Client not found');
     }
 
     const card = client.cards.find((card) => card.number == cardNumber);
+
+    if (card.blocked) {
+      throw new Error('Card blocked.');
+    }
 
     const account = client.accounts.find(
       (account) => account.iban == card.account,
@@ -44,15 +75,18 @@ export class AccountService {
       return args;
     }, 0);
 
-    if (card.configuration.dailyLimit - (Math.abs(daily) + amount) < 0) {
+    if (
+      card.configuration.dailyLimit - (Math.abs(daily) + amountWithCommission) <
+      0
+    ) {
       throw new Error('Daily limit exceeded');
     }
 
     if (card.type === 'debit') {
-      if (account.balance < amount) {
+      if (account.balance < amountWithCommission) {
         throw new Error('Not enough money');
       } else {
-        account.balance -= amount;
+        account.balance -= amountWithCommission;
       }
     } else if (card.type === 'credit' && card.limit) {
       const montly = await account.movements.reduce((args, movement) => {
@@ -63,10 +97,10 @@ export class AccountService {
         return args;
       }, 0);
 
-      if (account.balance + card.limit < amount + montly) {
+      if (account.balance + card.limit < amountWithCommission + montly) {
         throw new Error('Not enough money');
       } else {
-        let newBalence = account.balance - amount;
+        let newBalence = account.balance - amountWithCommission;
         if (newBalence < 0) {
           account.balance = 0;
           if (card.limit + newBalence < 0) {
@@ -81,8 +115,9 @@ export class AccountService {
     }
 
     account.movements.push({
-      date: new Date().toISOString(),
+      date: dayjs().format('YYYY-MM-DD').toString(),
       amount: -amount,
+      commission: commissions,
       description: 'Remove',
     });
 
@@ -101,6 +136,7 @@ export class AccountService {
     cardNumber: number,
     pin: number,
     amount: number,
+    bank: string,
   ): Promise<GetMoney> {
     const client = await this.clientService.getClient(cardNumber, pin);
 
@@ -110,15 +146,24 @@ export class AccountService {
 
     const card = client.cards.find((card) => card.number == cardNumber);
 
+    if (card.blocked) {
+      throw new Error('Card blocked.');
+    }
+
     const account = client.accounts.find(
       (account) => account.iban == card.account,
     );
 
+    if (account.bank !== bank) {
+      throw new Error('The deposit is not available for this bank.');
+    }
+
     account.balance += amount;
 
     account.movements.push({
-      date: new Date().toISOString(),
+      date: dayjs().format('YYYY-MM-DD').toString(),
       amount: amount,
+      commission: 0,
       description: 'Deposit',
     });
 
@@ -131,5 +176,9 @@ export class AccountService {
     };
 
     return Promise.resolve(result);
+  }
+
+  async transfer(): Promise<Transfer> {
+    return Promise.reject();
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Account, Movements } from './account.interface';
+import { Account, GetMoney, Movements } from './account.interface';
 import { ClientService } from '../client/client.service';
 import dayjs from 'dayjs';
 
@@ -23,7 +23,7 @@ export class AccountService {
     cardNumber: number,
     pin: number,
     amount: number,
-  ): Promise<Account> {
+  ): Promise<GetMoney> {
     const client = await this.clientService.getClient(cardNumber, pin);
 
     if (!client) {
@@ -32,37 +32,53 @@ export class AccountService {
 
     const card = client.cards.find((card) => card.number == cardNumber);
 
-    if (card.configuration.dailyLimit < amount) {
-      throw new Error('Daily limit exceeded');
-    }
-
     const account = client.accounts.find(
       (account) => account.iban == card.account,
     );
 
     const daily = await account.movements.reduce((args, movement) => {
-      const movementDate = dayjs();
-      if (dayjs().isSame(movementDate, 'day') && movement.amount < 0) {
+      const movementDate = dayjs(movement.date);
+      if (dayjs().format('YYYY-MM-DD') === movementDate.format('YYYY-MM-DD')) {
         return args + movement.amount;
       }
       return args;
     }, 0);
 
-    if (daily + amount > card.configuration.dailyLimit) {
+    if (card.configuration.dailyLimit - (Math.abs(daily) + amount) < 0) {
       throw new Error('Daily limit exceeded');
     }
 
-    if (card.type === 'debit' && account.balance < amount) {
-      throw new Error('Not enough money');
-    } else if (
-      card.type === 'credit' &&
-      card.limit &&
-      account.balance + card.limit < amount
-    ) {
-      throw new Error('Not enough money');
-    }
+    if (card.type === 'debit') {
+      if (account.balance < amount) {
+        throw new Error('Not enough money');
+      } else {
+        account.balance -= amount;
+      }
+    } else if (card.type === 'credit' && card.limit) {
+      const montly = await account.movements.reduce((args, movement) => {
+        const movementDate = dayjs();
+        if (dayjs().isSame(movementDate, 'month') && movement.amount < 0) {
+          return args + movement.amount;
+        }
+        return args;
+      }, 0);
 
-    account.balance -= amount;
+      if (account.balance + card.limit < amount + montly) {
+        throw new Error('Not enough money');
+      } else {
+        let newBalence = account.balance - amount;
+        if (newBalence < 0) {
+          account.balance = 0;
+          if (card.limit + newBalence < 0) {
+            throw new Error('Not enough credit money');
+          } else {
+            card.limit = card.limit + newBalence;
+          }
+        } else {
+          account.balance = newBalence;
+        }
+      }
+    }
 
     account.movements.push({
       date: new Date().toISOString(),
@@ -70,6 +86,50 @@ export class AccountService {
       description: 'Remove',
     });
 
-    return Promise.resolve(account);
+    const result: GetMoney = {
+      iban: account.iban,
+      name: client.name,
+      balance: account.balance,
+      movements: account.movements,
+      card: card,
+    };
+
+    return Promise.resolve(result);
+  }
+
+  async deposit(
+    cardNumber: number,
+    pin: number,
+    amount: number,
+  ): Promise<GetMoney> {
+    const client = await this.clientService.getClient(cardNumber, pin);
+
+    if (!client) {
+      throw new Error('Client not found');
+    }
+
+    const card = client.cards.find((card) => card.number == cardNumber);
+
+    const account = client.accounts.find(
+      (account) => account.iban == card.account,
+    );
+
+    account.balance += amount;
+
+    account.movements.push({
+      date: new Date().toISOString(),
+      amount: amount,
+      description: 'Deposit',
+    });
+
+    const result: GetMoney = {
+      iban: account.iban,
+      name: client.name,
+      balance: account.balance,
+      movements: account.movements,
+      card: card,
+    };
+
+    return Promise.resolve(result);
   }
 }

@@ -7,7 +7,7 @@
                 {
                     "iban": "DE89370400440532013000",
                     "balance": 100,
-                    "currency": "EUR",
+                    "currency": "€",
                     "bank": "DEUTDEDB",
                     "movements": [
                         {
@@ -25,13 +25,12 @@
                             "description": "Transfer",
                             "amount": -100
                         }
-                    ],
-                    "dayLimit": 500
+                    ]
                 },
                 {
                     "iban": "DE89370400440532013001",
                     "balance": 2000,
-                    "currency": "EUR",
+                    "currency": "€",
                     "bank": "DEUTDEDB",
                     "movements": [
                         {
@@ -44,8 +43,7 @@
                             "description": "Rent",
                             "amount": -500
                         }
-                    ],
-                    "dayLimit": 100
+                    ]
                 }
             ],
             "cards": [
@@ -57,7 +55,7 @@
                     "blocked": false,
                     "configuration": {
                         "language": "en",
-                        "currency": "USD",
+                        "currency": "€",
                         "dailyLimit": 500
                     }
                 },
@@ -70,8 +68,8 @@
                     "limit": 1000,
                     "configuration": {
                         "language": "en",
-                        "currency": "USD",
-                        "dailyLimit": 500
+                        "currency": "€",
+                        "dailyLimit": 900
                     }
                 }
             ],
@@ -92,7 +90,7 @@
                 {
                     "iban": "DE89370400440532013002",
                     "balance": 300,
-                    "currency": "EUR",
+                    "currency": "€",
                     "bank": "HYVEDEMM",
                     "movements": [
                         {
@@ -105,8 +103,7 @@
                             "description": "Rent",
                             "amount": -500
                         }
-                    ],
-                    "dayLimit": 300
+                    ]
                 }
             ],
             "cards": [
@@ -118,7 +115,7 @@
                     "account": "DE89370400440532013002",
                     "configuration": {
                         "language": "en",
-                        "currency": "USD",
+                        "currency": "€",
                         "dailyLimit": 500
                     }
                 }

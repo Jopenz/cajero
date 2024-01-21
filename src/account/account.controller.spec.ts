@@ -12,8 +12,10 @@ describe('AccountController', () => {
   let database: jest.Mocked<Database>;
 
   beforeEach(async () => {
+    const mockAClients: Client[] = data.clients;
     const clientService = TestBed.create(ClientService).compile();
     database = clientService.unitRef.get(Database);
+    database.getClients.mockResolvedValue(mockAClients);
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AccountController],
@@ -22,7 +24,6 @@ describe('AccountController', () => {
         AccountService,
       ],
     }).compile();
-
     controller = module.get<AccountController>(AccountController);
   });
 
@@ -31,8 +32,6 @@ describe('AccountController', () => {
   });
 
   it('Movements - Get Movements', async () => {
-    const mockAClients: Client[] = data.clients;
-    database.getClients.mockResolvedValue(mockAClients);
     const johnDoeMovements = await controller.getMovements(
       'DE89370400440532013000',
     );
@@ -51,17 +50,39 @@ describe('AccountController', () => {
     expect(juanPerezMovements[0].description).toEqual('Transfer');
   });
 
-  it('Money - Get Money', async () => {
-    const mockAClients: Client[] = data.clients;
-    database.getClients.mockResolvedValue(mockAClients);
+  it('Money - Get Money debit -30€ (success)', async () => {
+    const result = await controller.getMoney(123456789, 1234, 30);
+    expect(result.balance).toEqual(1970);
+    expect(result.movements.length).toEqual(3);
+    expect(result.movements[result.movements.length - 1].amount).toEqual(-30);
+  });
 
-    const newAccount = await controller.getMoney(123456789, 1234, 30);
+  it('Money - Get Money credit -400€ (success)', async () => {
+    const result = await controller.getMoney(123456788, 4567, 400);
+    expect(result.balance).toEqual(0);
+    expect(result.card.limit).toEqual(700);
+    expect(result.movements.length).toEqual(4);
+    expect(result.movements[result.movements.length - 1].amount).toEqual(-400);
+  });
 
-    expect(database.getClients).toHaveBeenCalled();
-    expect(newAccount.balance).toEqual(1970);
-    expect(newAccount.movements.length).toEqual(3);
-    expect(
-      newAccount.movements[newAccount.movements.length - 1].amount,
-    ).toEqual(-30);
+  it('Money - Get Money credit -500€ (success)', async () => {
+    const result = await controller.getMoney(123456788, 4567, 500);
+    expect(result.balance).toEqual(0);
+    expect(result.card.limit).toEqual(200);
+    expect(result.movements.length).toEqual(5);
+    expect(result.movements[result.movements.length - 1].amount).toEqual(-500);
+  });
+
+  it('Money - Get Money credit -150€ (error)', async () => {
+    expect(controller.getMoney(123456788, 4567, 150)).rejects.toThrow(
+      'Daily limit exceeded',
+    );
+  });
+
+  it('Money - Deposit 300€ (success)', async () => {
+    const result = await controller.deposit(123456789, 1234, 300);
+    expect(result.balance).toEqual(2270);
+    expect(result.movements.length).toEqual(4);
+    expect(result.movements[result.movements.length - 1].amount).toEqual(300);
   });
 });

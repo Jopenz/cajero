@@ -1,6 +1,6 @@
 import { Controller, Post, Put, Get, Body, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Account, Movements } from './account.interface';
+import { Account, GetMoney, Movements } from './account.interface';
 import { AccountService } from './account.service';
 
 @ApiTags('account')
@@ -18,8 +18,17 @@ export class AccountController {
     @Param('cardNumber') cardNumber: number,
     @Param('pin') pin: number,
     @Param('amount') amount: number,
-  ): Promise<Account> {
+  ): Promise<GetMoney> {
     return this.accountService.getMoney(cardNumber, pin, amount);
+  }
+
+  @Put('deposit/:cardNumber')
+  deposit(
+    @Param('cardNumber') cardNumber: number,
+    @Param('pin') pin: number,
+    @Param('amount') amount: number,
+  ): Promise<GetMoney> {
+    return this.accountService.deposit(cardNumber, pin, amount);
   }
 
   @Post('iban')
@@ -30,10 +39,5 @@ export class AccountController {
   @Post('transfer')
   transfer(): string {
     return 'transfer';
-  }
-
-  @Put('deposit')
-  deposit(): string {
-    return 'deposit';
   }
 }
